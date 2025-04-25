@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { FaSuitcase } from 'react-icons/fa6';
+import { NavLink } from 'react-router-dom';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,11 +34,9 @@ const Header = () => {
         </nav>
 
         {/* Auth Buttons */}
-        <div className="hidden space-x-4 md:flex">
-          <button className="font-medium text-blue-600 transition-all hover:underline">Login</button>
-          <button className="px-5 py-2 font-medium text-white transition-all bg-blue-600 shadow-sm rounded-xl hover:bg-blue-700">
-            Sign Up
-          </button>
+        <div className="items-center hidden space-x-4 md:flex">
+          <NavLink to="/login" className="font-medium text-blue-600 transition-all hover:underline">Login</NavLink>
+          <NavLink to="/register" className="px-5 py-2 font-medium text-white transition-all bg-blue-600 shadow-sm rounded-xl hover:bg-blue-700">Sign Up</NavLink>          
         </div>
 
         {/* Mobile Menu Button */}
@@ -67,12 +66,12 @@ const Header = () => {
             </a>
           ))}
           <div className="pt-4 space-y-2 border-t">
-            <button className="block w-full font-medium text-left text-blue-600 hover:underline">
+            <NavLink to="/login" className="block w-full font-medium text-left text-blue-600 hover:underline">
               Login
-            </button>
-            <button className="block w-full px-4 py-2 text-left text-white transition-all bg-blue-600 rounded-xl hover:bg-blue-700">
+            </NavLink>
+            <NavLink to="/register" className="block w-full px-4 py-2 text-left text-white transition-all bg-blue-600 rounded-xl hover:bg-blue-700">
               Sign Up
-            </button>
+            </NavLink>
           </div>
         </div>
       </div>
