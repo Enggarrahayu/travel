@@ -1,7 +1,7 @@
 import { FaSuitcase } from "react-icons/fa6";
-import Footer from "../Footer";
-import Header from "../Header";
 import { FaUser, FaEnvelope, FaLock, FaUserTag } from "react-icons/fa";
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
 
 const Register = () => {
   return (
