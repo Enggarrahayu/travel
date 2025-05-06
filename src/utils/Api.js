@@ -1,7 +1,12 @@
-import axios from "axios";
+import axios from 'axios';
+import { baseUrl, apiKey } from '../config';
 
 const Api = axios.create({
-  baseURL: "https://travel-journal-api-bootcamp.do.dibimbing.id/api/v1",
+  baseURL: baseUrl,
+  headers: {
+    'apiKey': apiKey,
+    'Content-Type': 'application/json'
+  }
 });
 
 export default Api;
