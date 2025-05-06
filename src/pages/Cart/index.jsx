@@ -5,9 +5,11 @@ import { FaCartArrowDown, FaHome, FaTrash } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
 import Api from '../../utils/Api';
 import { apiKey } from '../../config';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   const getCartItems = async () => {
     try {
@@ -25,6 +27,49 @@ const Cart = () => {
       console.error("Failed to fetch carts: ", error)
     }
   }
+
+  const updateCart = async (id, quantity) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await Api.post(
+        `update-cart/${id}`,
+        { quantity },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            apiKey: apiKey,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      
+      toast.success("Cart updated successfully", {
+        position: "top-right",
+        autoClose: 2000, 
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+  
+      console.log('Cart updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error updating cart:', error);
+    }
+  };
+  
+
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  const debouncedUpdateCart = debounce(updateCart, 2000);
+  
   
   const updateQuantity = (id, delta) => {
     setCartItems((prevItems) =>
@@ -34,6 +79,12 @@ const Cart = () => {
           : item
       )
     );
+
+    const updatedItem = cartItems.find((item) => item.id === id);
+    if (updatedItem) {
+      const newQuantity = Math.max(1, updatedItem.quantity + delta);
+      debouncedUpdateCart(id, newQuantity);
+    }
   };
 
   const removeItem = async (id) => {
@@ -45,17 +96,41 @@ const Cart = () => {
           apiKey: apiKey,
         },
       });
-  
       setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      toast.success("Item removed from cart", {
+        position: "top-right",
+        autoClose: 2000, 
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (error) {
       console.error("Failed to remove item from cart:", error);
     }
   };
 
-  const totalPrice = cartItems.reduce(
-    (total, item) => total + item.activity.price * item.quantity,
-    0
-  );
+  const totalPrice = cartItems
+  .filter((item) => selectedItems.includes(item.id))
+  .reduce((sum, item) => sum + item.activity.price * item.quantity, 0);
+
+
+  const handleSelectItem = (id) => {
+    setSelectedItems((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((itemId) => itemId !== id)
+        : [...prevSelected, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedItems.length === cartItems.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(cartItems.map((item) => item.id));
+    }
+  };
 
   useEffect(() => {
     getCartItems()
@@ -65,6 +140,7 @@ const Cart = () => {
     <>
       <Header />
       <div className="max-w-6xl p-6 pt-20 mx-auto mt-5">     
+        <ToastContainer/>
         <nav className="mb-6 text-sm text-gray-600" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-2">
             <li className="inline-flex items-center">
@@ -101,71 +177,89 @@ const Cart = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-white">
                 <tr>
+                  <th className="px-3 py-3 text-sm font-medium text-left text-gray-500">
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.length === cartItems.length}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
                   <th className="px-6 py-3 text-sm font-medium text-left text-gray-500">Product</th>
-                  <th className="px-6 py-3 text-sm font-medium text-left text-gray-500">Price /pax</th>
+                  <th className="px-6 py-3 text-sm font-medium text-left text-gray-500">Price</th>
                   <th className="px-6 py-3 text-sm font-medium text-left text-gray-500">Qty</th>
                   <th className="px-6 py-3 text-sm font-medium text-left text-gray-500">Total Price</th>
                   <th className="px-6 py-3 text-sm font-medium text-left text-gray-500">Action</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-300">
-                {cartItems.map((item, index) => (
-                  <tr key={index}>
+                {cartItems.map((item) => (
+                  <tr key={item.id}>
+                    <td className="px-3 py-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.includes(item.id)}
+                        onChange={() => handleSelectItem(item.id)}
+                      />
+                    </td>
                     <td className="px-6 py-4">
-                      <div className="flex flex-col items-center md:flex-row ">
-                        <img
-                          src={item.activity.imageUrls[0]}
-                          alt={item.activity.title}
-                          className="object-cover w-20 h-20 mr-4 rounded"
-                          onError={(e) => {
-                            e.target.onerror = null; 
-                            e.target.src = '/assets/default-activity.jpg'; 
-                          }}
-                        />
-                        <div className='flex flex-row mt-2 md:flex-col md:mt-0'>
-                          <div className="mr-2 text-sm font-medium text-gray-900 md:mr-0">{item.activity.title}</div>
-                          <div className="text-sm text-gray-500">{item.activity.description}</div>
+                        <div className="flex flex-col items-center md:flex-row ">
+                          <img
+                            src={item.activity.imageUrls[0]}
+                            alt={item.activity.title}
+                            className="object-cover w-20 h-20 mr-4 rounded"
+                            onError={(e) => {
+                              e.target.onerror = null; 
+                              e.target.src = '/assets/default-activity.jpg'; 
+                            }}
+                          />
+                          <div className='flex flex-row mt-2 md:flex-col md:mt-0'>
+                            <div className="mr-2 text-sm font-medium text-gray-900 md:mr-0">{item.activity.title}</div>
+                            <div className="text-sm text-gray-500">{item.activity.description}</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">Rp {item.activity.price.toLocaleString()}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">Rp {item.activity.price.toLocaleString()}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <button
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="px-2 py-1 bg-gray-200 rounded-l hover:bg-gray-300"
+                          >
+                            −
+                          </button>
+                          <span className="px-4 py-1 bg-gray-100">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="px-2 py-1 bg-gray-200 rounded-r hover:bg-gray-300"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-blue-600">
+                        Rp {(item.activity.price * item.quantity).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4">
                         <button
-                          onClick={() => updateQuantity(item.id, -1)}
-                          className="px-2 py-1 bg-gray-200 rounded-l hover:bg-gray-300"
+                          onClick={() => removeItem(item.id)}
+                          className="text-sm font-medium text-red-600 cursor-pointer"
                         >
-                          −
+                          Remove
                         </button>
-                        <span className="px-4 py-1 bg-gray-100">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.id, 1)}
-                          className="px-2 py-1 bg-gray-200 rounded-r hover:bg-gray-300"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-blue-600">
-                      Rp {(item.activity.price * item.quantity).toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                         onClick={() => removeItem(item.id)}
-                        className="text-sm font-medium text-red-600 cursor-pointer"
-                      >
-                        Remove
-                      </button>
-                    </td>
+                      </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <div className="p-4 text-sm text-gray-600">
+              <h2 className='text-lg font-medium'>My Cart</h2>
+              {selectedItems.length} selected items
+            </div>
           </div>
 
           {/* Order Summary */}
           <div className="flex flex-col justify-between h-full p-6 bg-white rounded-lg shadow-lg lg:col-span-1">
-            <h2 className="mb-6 text-xl font-semibold text-blue-600">Order Summary</h2>
+            <h2 className="mb-6 text-2xl font-semibold text-blue-600">Order Summary</h2>
 
             <div className="space-y-3 text-sm text-gray-700">
               <div className="flex justify-between">
@@ -179,9 +273,9 @@ const Cart = () => {
             </div>
             <hr className="my-4 border-t border-gray-300" />
             
-            <div className="flex justify-between pt-4 mt-6 mb-4 text-base font-semibold text-blue-600">
-              <span>Total</span>
-              <span>Rp {(totalPrice * 1.1).toLocaleString()}</span>
+            <div className="flex justify-between pt-4 mt-6 mb-4 text-base font-bold text-blue-600">
+              <span className='text-xl'>Total Payment</span>
+              <span className='text-gray-700'>Rp {(totalPrice * 1.1).toLocaleString()}</span>
             </div>
 
             <button className="w-full px-4 py-2 mt-auto font-medium text-white transition-colors bg-blue-600 border border-blue-600 rounded hover:bg-white hover:text-blue-600">
