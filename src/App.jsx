@@ -4,6 +4,7 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import { AuthProvider } from './context/authContext'
+import ActivityDetails from './pages/ActivityDetail'
 
 function App() {
   
@@ -14,7 +15,8 @@ function App() {
           <Routes>
             <Route path='/' element={<Home/>}></Route>
             <Route path='/register' element={<Register />}></Route>
-            <Route path='/login' element={<Login/>}></Route>
+            <Route path='/login' element={<Login />}></Route>
+            <Route path='/activity/:id' element={<ActivityDetails/>}></Route>
           </Routes>
         </BrowserRouter>
       </AuthProvider>

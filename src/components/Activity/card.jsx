@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const ActivityCard = ({ activities }) => {
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-4">
@@ -13,7 +15,7 @@ const ActivityCard = ({ activities }) => {
           alt="Activity"
           className="object-cover w-full h-full transition-transform duration-300 hover:scale-110"
           onError={(e) => {
-            e.target.onerror = null; // supaya tidak infinite loop
+            e.target.onerror = null; 
             e.target.src = '/assets/default-image.png'; 
           }}
         />
@@ -47,10 +49,8 @@ const ActivityCard = ({ activities }) => {
 
           {/* Price & CTA */}
           <div className="flex items-center justify-between mt-auto">
-            <span className="text-lg font-bold text-blue-600">${ item.price }</span>
-            <button className="px-3 py-1 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700">
-              View
-            </button>
+            <span className="text-lg font-bold text-blue-600">${item.price}</span>
+            <Link to={`/activity/${item.id}`} className="px-3 py-1 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700">View</Link>
           </div>
         </div>
       </div>

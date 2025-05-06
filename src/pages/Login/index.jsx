@@ -33,14 +33,10 @@ const Login = () => {
       setMessageType("");
     
       try {
-        const response = await Api.post("/login", { email, password }, {
-          headers: {
-            'apiKey': '24405e01-fbc1-45a5-9f5a-be13afcd757c'
-          }
-        });
-    
+        const response = await Api.post("/login", { email, password });
+      
         console.log("Login response:", response);
-    
+      
         const token = response.data?.access_token || response.data?.token;
         const user = response.data?.data;
     
