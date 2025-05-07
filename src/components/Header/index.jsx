@@ -3,6 +3,8 @@ import { Menu, X } from 'lucide-react';
 import { FaSuitcase, FaSuitcaseRolling, FaUserEdit, FaSignOutAlt, FaShoppingCart } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
+import Api from '../../utils/Api';
+import { apiKey } from '../../config';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,24 +12,53 @@ const Header = () => {
   const { isAuthenticated, currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+  const [totalItems, setTotalItems] = useState(0);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
+  
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
+  const getTotalItemInCart = async() => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await Api.get("/carts", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          apiKey: apiKey,
+        },
+      });
+      setTotalItems(response.data.data.length);
+    } catch (error) {
+      console.error("Failed to fetch total items: ", error)
+    }
+  };
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleCartUpdate = () => {
+      getTotalItemInCart();
+    };
+  
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    getTotalItemInCart();
+     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
   }, []);
+  
 
   return (
     <header className="fixed top-0 z-50 w-full bg-blue-600 shadow-md">
@@ -69,7 +100,7 @@ const Header = () => {
                 <div className="relative flex items-center justify-center w-10 h-10 bg-blue-500 rounded-full hover:bg-blue-700">
                   <FaShoppingCart className="text-white" size={20} />
                   <span className="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-blue-600 bg-white rounded-full -top-2 -right-2">
-                    0
+                    {totalItems}
                   </span>
                 </div>
               </NavLink>

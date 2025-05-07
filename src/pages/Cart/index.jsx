@@ -6,6 +6,7 @@ import { NavLink } from 'react-router-dom';
 import Api from '../../utils/Api';
 import { apiKey } from '../../config';
 import { toast, ToastContainer } from 'react-toastify';
+import FallbackImage from '../../utils/FallbackImage';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -38,7 +39,6 @@ const Cart = () => {
           headers: {
             Authorization: `Bearer ${token}`,
             apiKey: apiKey,
-            'Content-Type': 'application/json',
           },
         }
       );
@@ -106,6 +106,8 @@ const Cart = () => {
         draggable: true,
         progress: undefined,
       });
+      
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       console.error("Failed to remove item from cart:", error);
     }
@@ -203,14 +205,10 @@ const Cart = () => {
                     </td>
                     <td className="px-6 py-4">
                         <div className="flex flex-col items-center md:flex-row ">
-                          <img
+                          <FallbackImage
                             src={item.activity.imageUrls[0]}
                             alt={item.activity.title}
                             className="object-cover w-20 h-20 mr-4 rounded"
-                            onError={(e) => {
-                              e.target.onerror = null; 
-                              e.target.src = '/assets/default-activity.jpg'; 
-                            }}
                           />
                           <div className='flex flex-row mt-2 md:flex-col md:mt-0'>
                             <div className="mr-2 text-sm font-medium text-gray-900 md:mr-0">{item.activity.title}</div>

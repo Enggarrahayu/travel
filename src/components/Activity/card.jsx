@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import FallbackImage from "../../utils/FallbackImage";
 
 const ActivityCard = ({ activities }) => {
   return (
@@ -10,14 +11,10 @@ const ActivityCard = ({ activities }) => {
       >
         {/* Image Section */}
         <div className="relative w-full h-48 overflow-hidden">
-        <img
-          src={item.imageUrls && item.imageUrls[0] ? item.imageUrls[0] : '/assets/default-image.png'}
+        <FallbackImage
+          src={item.imageUrls && item.imageUrls[0]}
           alt="Activity"
           className="object-cover w-full h-full transition-transform duration-300 hover:scale-110"
-          onError={(e) => {
-            e.target.onerror = null; 
-            e.target.src = '/assets/default-image.png'; 
-          }}
         />
           {/* Location badge */}
           <div className="absolute px-3 py-1 text-xs text-white bg-blue-500 rounded-full shadow-md top-2 left-2">
@@ -29,7 +26,7 @@ const ActivityCard = ({ activities }) => {
         <div className="flex flex-col flex-1 p-4">
           {/* Title */}
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-            Amazing Snorkeling Trip
+            { item.title }
           </h3>
 
           {/* Rating */}

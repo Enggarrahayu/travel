@@ -11,6 +11,8 @@ import Api from '../../utils/Api';
 import { apiKey } from '../../config'
 import { FaLocationDot, FaMapLocation } from 'react-icons/fa6';
 import '../ActivityDetail/style.css'
+import { toast, ToastContainer } from 'react-toastify';
+import FallbackImage from '../../utils/FallbackImage';
 
 const ActivityDetails = () => {
   const { id } = useParams();
@@ -53,6 +55,38 @@ const ActivityDetails = () => {
     }
   }
 
+  const addToCart = async (activityId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await Api.post(
+        "add-cart",
+        { activityId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            apiKey: apiKey,
+          },
+        }
+      );
+
+      toast.success("Successfully added item to cart", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      
+      window.dispatchEvent(new Event("cartUpdated"));
+      
+      console.log("added cart response:", response.data);
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+    }
+  };
+  
   useEffect(() => {
     getActivityDetails();
     getBanners();
@@ -69,6 +103,8 @@ const ActivityDetails = () => {
   return (
     <>
       <Header />
+      
+      <ToastContainer/>
        {/* Banner */}
        <div
           className="relative w-full h-[300px] bg-cover bg-center  mt-20"
@@ -91,14 +127,10 @@ const ActivityDetails = () => {
         {activity.imageUrls && activity.imageUrls.length > 0 && (
           <div className="flex gap-4 overflow-x-auto">
             {activity.imageUrls.map((img, idx) => (
-              <img
+              <FallbackImage
                 key={idx}
-                src={img ? img : '/assets/default-image.png'}
+                src={img}
                 onClick={() => setSelectedImage(idx)}
-                onError={(e) => {
-                  e.target.onerror = null; 
-                  e.target.src = '/assets/default-image.png'; 
-                }}
                 className={`w-24 h-24 object-cover rounded-lg cursor-pointer border-2 ${
                   selectedImage === idx ? "border-blue-500" : "border-transparent"
                 }`}
@@ -193,7 +225,10 @@ const ActivityDetails = () => {
                 Book Now
               </button>
               
-              <button className="w-full px-4 py-2 font-medium text-blue-600 transition-all bg-white border border-blue-600 rounded-lg hover:bg-blue-50">
+              <button
+                className="w-full px-4 py-2 font-medium text-blue-600 transition-all bg-white border border-blue-600 rounded-lg hover:bg-blue-50"
+                onClick={() => addToCart(activity.id)}
+              >
                 Add to Cart
               </button>
             </div>          
