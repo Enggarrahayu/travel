@@ -97,7 +97,9 @@ const Home = () => {
           {/* Activities / Places List */}
           <section>
             <h2 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Top Activities</h2>
-            <ActivityCard activities={ activities } />
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-4">
+              <ActivityCard activities={activities} />
+            </div>
           </section>
 
           {/* Deals / Coupons */}

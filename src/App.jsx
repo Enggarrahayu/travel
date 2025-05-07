@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import { AuthProvider } from './context/authContext'
 import ActivityDetails from './pages/ActivityDetail'
 import Cart from './pages/Cart'
+import Activities from './pages/Activities'
 
 function App() {
   
@@ -19,7 +20,8 @@ function App() {
             <Route path='/register' element={<Register />}></Route>
             <Route path='/login' element={<Login />}></Route>
             <Route path='/activity/:id' element={<ActivityDetails />}></Route>
-            <Route path='/cart' element={<Cart/>}></Route> 
+            <Route path='/cart' element={<Cart />}></Route> 
+            <Route path='/escapes' element={<Activities/>}></Route>
           </Routes>
         </BrowserRouter>
       </AuthProvider>

@@ -3,7 +3,7 @@ import FallbackImage from "../../utils/FallbackImage";
 
 const ActivityCard = ({ activities }) => {
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-3 lg:grid-cols-4">
+    <>
     {activities.map((item, index) => (
       <div
         key={index}
@@ -52,7 +52,7 @@ const ActivityCard = ({ activities }) => {
         </div>
       </div>
     ))}
-    </div>
+    </>
   );
 };
 
