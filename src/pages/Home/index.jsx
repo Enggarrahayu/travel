@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import ActivityCard from "../../components/Activity/card";
-import DealCard from "../../components/Deal/card";
+import DealCard from "../../components/Deals/card";
 import Api from "../../utils/Api";
 import CategoryCard from "../../components/Category/card";
 

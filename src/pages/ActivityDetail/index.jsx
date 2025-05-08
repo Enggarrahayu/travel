@@ -1,15 +1,15 @@
 // src/pages/ActivityDetail/index.jsx
 
 import { useState, useEffect } from 'react';
-import { FaStar, FaMapMarkerAlt, FaClock, FaCheckCircle } from 'react-icons/fa';
+import { FaStar, FaMapMarkerAlt, FaClock, FaCheckCircle, FaHome } from 'react-icons/fa';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import Api from '../../utils/Api';
 import { apiKey } from '../../config'
-import { FaLocationDot, FaMapLocation } from 'react-icons/fa6';
+import { FaLocationDot, FaUmbrellaBeach } from 'react-icons/fa6';
 import '../ActivityDetail/style.css'
 import { toast, ToastContainer } from 'react-toastify';
 import FallbackImage from '../../utils/FallbackImage';
@@ -122,7 +122,33 @@ const ActivityDetails = () => {
           </div>
         </div>
       <div className="max-w-6xl px-4 py-5 mx-auto mt-6 space-y-8">   
-
+        <nav className="mb-6 text-sm text-gray-600" aria-label="Breadcrumb">
+          <ol className="inline-flex items-center space-x-1 md:space-x-2">
+            <li className="inline-flex items-center">
+              <NavLink to="/" className="inline-flex items-center hover:text-blue-600">
+                <FaHome className='w-3 h-3 mx-2 text-gray-400'/>
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <div className="flex items-center">
+                <svg
+                  className="w-3 h-3 mx-2 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 6 10"
+                >
+                  <path d="M1 1L5 5L1 9" />
+                </svg>
+                <FaUmbrellaBeach
+                  className="w-3 h-3 mx-2 text-gray-400"
+                />
+                <span className="text-gray-500">Escapes</span>
+              </div>
+            </li>
+          </ol>
+        </nav>          
         {/* Image Gallery */}
         {activity.imageUrls && activity.imageUrls.length > 0 && (
           <div className="flex gap-4 overflow-x-auto">
