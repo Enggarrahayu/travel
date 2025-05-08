@@ -107,13 +107,13 @@ const ActivityDetails = () => {
       <ToastContainer/>
        {/* Banner */}
        <div
-          className="relative w-full h-[300px] bg-cover bg-center  mt-20"
+          className="relative w-full h-[400px] bg-cover bg-center  mt-20 p-8 rounded-2xl mt-22 "
           style={{
             backgroundImage:
-              `url(${banners[1].imageUrl})`
+              `url(${banners[0].imageUrl})`
           }}
         >
-          <div className="absolute inset-0 bg-black/40 " />
+          <div className="absolute inset-0 bg-black/40 rounded-2xl" />
           <div className="absolute text-white bottom-6 left-6">
             <h1 className="text-3xl font-bold">{activity.title}</h1>
             <p className="flex items-center mt-2 text-sm">
