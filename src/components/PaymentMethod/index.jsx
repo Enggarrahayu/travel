@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import Api from "../../utils/Api";
 import { apiKey } from "../../config";
 
-const PaymentMethods = ({ selected, onChange }) => {
+const PaymentMethod = ({ selectedPaymentMethod, onPaymentMethodChange }) => {
   const [methods, setMethods] = useState([]);
 
   useEffect(() => {
@@ -23,38 +23,38 @@ const PaymentMethods = ({ selected, onChange }) => {
 
     fetchPaymentMethods();
   }, []);
-
+  
   return (
-    <div className="space-y-4">
-      {methods.map((method) => (
-        <label
-          key={method.id}
-          className="flex items-center justify-between p-4 border rounded-lg shadow-sm cursor-pointer hover:bg-gray-50"
-        >
-          <div className="flex items-center gap-3">
-            <input
-              type="radio"
-              name="paymentMethod"
-              value={method.id}
-              checked={selected === method.id}
-              onChange={() => onChange(method.id)}
-              className="accent-blue-600"
-            />
-            <span className="text-sm font-semibold text-gray-800">{method.name}</span>
-          </div>
-          <img
-            src={method.imageUrl}
-            alt={method.name}
-            className="object-contain w-auto h-8"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/default-img.png"; 
-            }}
-          />
-        </label>
-      ))}
-    </div>
+<div className="space-y-4">
+  {methods.map((method) => (
+    <label
+      key={method.id}
+      className="flex items-center justify-between p-4 border rounded-lg shadow-sm cursor-pointer hover:bg-gray-50"
+    >
+      <div className="flex items-center gap-3">
+        <input
+          type="radio"
+          name="paymentMethod"
+          value={method.id}
+          onChange={onPaymentMethodChange}
+          checked={selectedPaymentMethod === method.id} 
+          className="accent-blue-600"
+        />
+        <span className="text-sm font-semibold text-gray-800">{method.name}</span>
+      </div>
+      <img
+        src={method.imageUrl}
+        alt={method.name}
+        className="object-contain w-auto h-8"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = "/default-img.png"; 
+        }}
+      />
+    </label>
+  ))}
+</div>
   );
 };
 
-export default PaymentMethods;
+export default PaymentMethod;
