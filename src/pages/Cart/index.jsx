@@ -7,12 +7,14 @@ import { toast, ToastContainer } from 'react-toastify';
 import FallbackImage from '../../utils/FallbackImage';
 import CheckoutConfirmModal from './checkout_confirm_modal';
 import PaymentMethod from '../../components/PaymentMethod';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); 
+  const navigate = useNavigate();
 
   const getCartItems = async () => {
     try {
@@ -29,6 +31,89 @@ const Cart = () => {
       console.error("Failed to fetch carts: ", error)
     }
   }
+
+   const updateCart = async (id, quantity) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await Api.post(
+        `update-cart/${id}`,
+        { quantity },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            apiKey: apiKey,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      
+      toast.success("Cart updated successfully", {
+        position: "top-right",
+        autoClose: 2000, 
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+  
+      console.log('Cart updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error updating cart:', error);
+    }
+  };
+  
+
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  const debouncedUpdateCart = debounce(updateCart, 2000);
+  
+  
+  const updateQuantity = (id, delta) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id
+          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+          : item
+      )
+    );
+
+    const updatedItem = cartItems.find((item) => item.id === id);
+    if (updatedItem) {
+      const newQuantity = Math.max(1, updatedItem.quantity + delta);
+      debouncedUpdateCart(id, newQuantity);
+    }
+  };
+
+  const removeItem = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await Api.delete(`/delete-cart/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          apiKey: apiKey,
+        },
+      });
+      setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      toast.success("Item removed from cart", {
+        position: "top-right",
+        autoClose: 2000, 
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    } catch (error) {
+      console.error("Failed to remove item from cart:", error);
+    }
+  };
 
   const handleCheckout = async () => {
     if (selectedItems.length === 0) {
@@ -67,7 +152,7 @@ const Cart = () => {
         autoClose: 2000,
       });
 
-      // history.push("/order-confirmation");
+      navigate("/my-orders");
       
       setIsModalOpen(false);
     } catch (error) {
@@ -80,11 +165,10 @@ const Cart = () => {
       setIsModalOpen(false);
     }
   };
-
+  
   const handleCancelCheckout = () => {
     setIsModalOpen(false); 
   };
-
 
   useEffect(() => {
     getCartItems();

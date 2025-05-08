@@ -8,6 +8,7 @@ import ActivityDetails from './pages/ActivityDetail'
 import Cart from './pages/Cart'
 import Activities from './pages/Activities'
 import Deals from './pages/Deals'
+import MyOrders from './pages/Transaction'
 
 function App() {
   
@@ -23,7 +24,8 @@ function App() {
             <Route path='/activity/:id' element={<ActivityDetails />}></Route>
             <Route path='/cart' element={<Cart />}></Route> 
             <Route path='/escapes' element={<Activities />}></Route>
-            <Route path='/deals' element={<Deals/>}></Route>
+            <Route path='/deals' element={<Deals />}></Route>
+            <Route path='/my-orders' element={<MyOrders/>}></Route>
           </Routes>
         </BrowserRouter>
       </AuthProvider>
