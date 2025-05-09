@@ -2,7 +2,7 @@ import { FaSuitcase } from "react-icons/fa6";
 import { FaUser, FaEnvelope, FaLock, FaUserTag } from "react-icons/fa";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-import { useAuth } from "../../context/authContext";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Api from "../../utils/Api";

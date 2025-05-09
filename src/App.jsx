@@ -3,12 +3,13 @@ import '../src/index.css'
 import Register from './pages/Register'
 import Login from './pages/Login'
 import Home from './pages/Home'
-import { AuthProvider } from './context/authContext'
+import { AuthProvider } from '././context/AuthContext'
 import ActivityDetails from './pages/ActivityDetail'
 import Cart from './pages/Cart'
 import Activities from './pages/Activities'
 import Deals from './pages/Deals'
 import MyOrders from './pages/Transaction'
+import TransactionDetail from './pages/TransactionDetail'
 
 function App() {
   
@@ -25,7 +26,8 @@ function App() {
             <Route path='/cart' element={<Cart />}></Route> 
             <Route path='/escapes' element={<Activities />}></Route>
             <Route path='/deals' element={<Deals />}></Route>
-            <Route path='/my-orders' element={<MyOrders/>}></Route>
+            <Route path='/my-orders' element={<MyOrders />}></Route>
+            <Route path='/my-orders/:id' element={<TransactionDetail/>}></Route>
           </Routes>
         </BrowserRouter>
       </AuthProvider>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 import { FaSuitcase, FaSuitcaseRolling, FaUserEdit, FaSignOutAlt, FaShoppingCart } from 'react-icons/fa';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../context/AuthContext';
 import Api from '../../utils/Api';
 import { apiKey } from '../../config';
 
@@ -132,8 +132,8 @@ const Header = () => {
                       {currentUser?.name || currentUser?.email}
                     </div>
                     <div className="flex flex-col py-2">
-                      <NavLink to="/my-trips" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100">
-                        <FaSuitcaseRolling className="text-blue-600" /> My Trips
+                      <NavLink to="/my-orders" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100">
+                        <FaSuitcaseRolling className="text-blue-600" /> My Orders
                       </NavLink>
                       <NavLink to="/edit-profile" className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100">
                         <FaUserEdit className="text-blue-600" /> Edit Profile
@@ -188,8 +188,10 @@ const Header = () => {
           <div className="pt-4 mt-2 border-t">
             {isAuthenticated ? (
               <>
-                <NavLink to="/my-trips" className="block px-4 py-2 text-gray-700 rounded hover:bg-gray-100">
-                  🧳 My Trips
+                <NavLink to="/my-orders" className="block px-4 py-2 text-gray-700 rounded hover:bg-gray-100">
+                  <span className='flex items-center'>                    
+                    <FaSuitcaseRolling className="mr-2 text-blue-600" /> My Orders
+                  </span>
                 </NavLink>
                 <NavLink to="/edit-profile" className="block px-4 py-2 text-gray-700 rounded hover:bg-gray-100">
                   ✏️ Edit Profile
