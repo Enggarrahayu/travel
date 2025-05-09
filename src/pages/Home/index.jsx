@@ -5,11 +5,13 @@ import ActivityCard from "../../components/Activity/card";
 import DealCard from "../../components/Deals/card";
 import Api from "../../utils/Api";
 import CategoryCard from "../../components/Category/card";
+import { apiKey } from "../../config";
 
 const Home = () => {
   const [activities, setActivities] = useState([])
   const [deals, setDeals] = useState([]);
-  const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState([]);  
+  const [banners, setBanners] = useState([]);
   const getActivities = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -32,13 +34,28 @@ const Home = () => {
     }
   };
 
+    const getBanners = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await Api.get('/banners', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          apiKey: apiKey,
+        },
+      });
+      console.log('Banners ',response.data.data)
+      setBanners(response.data.data)
+    } catch (error) {
+      console.error("Failed to fetch banners: ", error)
+    }
+  }
   const getDeals = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await Api.get("/promos", {
         headers: {
           Authorization: `Bearer ${token}`,
-          'apiKey': '24405e01-fbc1-45a5-9f5a-be13afcd757c'
+          apiKey: apiKey
         },
       });
   
@@ -74,22 +91,33 @@ const Home = () => {
   useEffect(() => {
       getActivities(),
       getDeals(),
-      getCategories()
+      getCategories(),
+      getBanners()
   }, [])
   
   return (
     <>
       <Header />
       
-      <div className="min-h-screen pt-20 pb-12 bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen p-2 pt-20 pb-12 bg-gray-50 dark:bg-gray-900">
         {/* Banner */}
-        <section className="relative w-full h-[60vh] bg-cover bg-center bg-[url('/assets/mountain-banner.png')]">
-          <div className="flex items-center justify-center w-full h-full">
-            <h1 className="text-3xl font-bold text-white md:text-5xl">
-              Explore the World via Tripvia
-            </h1>
-          </div>
-        </section>
+<section
+  className="relative w-full h-[450px] bg-cover bg-center p-4 mt-2"
+  style={{
+    backgroundImage: banners[0]?.imageUrl ? `url(${banners[0].imageUrl})` : 'none',
+  }}
+>
+  <div className="absolute inset-0 bg-black/50 rounded-2xl">
+    <div className="flex flex-col items-center justify-center w-full h-full px-4 text-center">
+      <h1 className="text-3xl font-bold text-white md:text-5xl">
+        Explore the World via Tripvia
+      </h1>
+      <p className="max-w-2xl mt-4 text-white text-md md:text-lg">
+        Discover new destinations, plan your trips, and make unforgettable memories with Tripvia.
+      </p>
+    </div>
+  </div>
+</section>
 
 
         <div className="container px-4 py-10 mx-auto space-y-16">
