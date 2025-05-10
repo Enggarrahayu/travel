@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FallbackImage = ({ src, alt, className }) => {
+const FallbackImage = ({ src, alt, onClick, className }) => {
   const handleError = (e) => {
     e.currentTarget.onerror = null;
     e.currentTarget.src = '/assets/default-img.png';
@@ -12,6 +12,7 @@ const FallbackImage = ({ src, alt, className }) => {
       alt={alt}
       className={className}
       onError={handleError}
+      onClick={onClick}
     />
   );
 };

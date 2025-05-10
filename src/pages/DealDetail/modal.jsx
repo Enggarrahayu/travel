@@ -1,5 +1,6 @@
 import { FaCopy } from "react-icons/fa6";
 import { toast, ToastContainer } from "react-toastify";
+import FallbackImage from "../../utils/FallbackImage";
 
 function DealDetailModal({ deal, onClose }) {
   return (
@@ -10,7 +11,7 @@ function DealDetailModal({ deal, onClose }) {
         {/* Gambar Promo */}
         {deal.imageUrl && (
           <div className="mb-6 overflow-hidden rounded-lg">
-            <img
+            <FallbackImage
               src={deal.imageUrl}
               alt="Promo"
               className="object-cover w-full h-52"
