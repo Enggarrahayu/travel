@@ -1,11 +1,10 @@
-import React from 'react';
 
-const CheckoutConfirmModal = ({ onCancel, onConfirm }) => {
+const CancelConfirmModal = ({ onCancel, onConfirm }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.7)]">
       <div className="w-full max-w-lg mx-4 my-6 bg-gray-100 rounded-2xl shadow-xl overflow-y-auto max-h-[90vh] p-6 sm:mx-auto sm:max-w-lg">
-        <h2 className='text-2xl font-bold text-gray-600'>Confirm Checkout</h2>
-        <p className="mt-2 text-base text-gray-600">Are you sure you want to proceed the action?</p>
+        <h2 className='text-2xl font-bold text-gray-600'>Confirm Cancel Transaction</h2>
+        <p className="mt-2 text-base text-gray-600">Are you sure you want to cancel the transaction</p>
         
         <div className="flex justify-center mt-6 gap-x-6">
           <button
@@ -26,4 +25,4 @@ const CheckoutConfirmModal = ({ onCancel, onConfirm }) => {
   );
 };
 
-export default CheckoutConfirmModal;
+export default CancelConfirmModal;

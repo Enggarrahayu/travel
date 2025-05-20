@@ -6,15 +6,17 @@ import { apiKey } from "../../config";
 import { useEffect, useState } from "react";
 import Api from "../../utils/Api";
 import FallbackImage from "../../utils/FallbackImage";
-import { Clock, Upload, Wallet, XCircle } from "lucide-react";
 import { FaCopy } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
+import CancelConfirmModal from "./cancelConfirmModal";
 
 const TransactionDetail = () => {
   const { id } = useParams();
   const [transaction, setTransaction] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 
-  useEffect(() => {
+
     const fetchTransaction = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -29,12 +31,52 @@ const TransactionDetail = () => {
         console.error("Error fetching transaction detail:", err);
       }
     };
+  
+    useEffect(() => {
 
-    fetchTransaction();
-  }, [id]);
+      fetchTransaction();
+    }, [id]);
 
-  const handleCancel = () => {
-    alert("Cancel Transaction Clicked");
+
+    const handleCancelCancel = () => {
+    setIsModalOpen(false);
+    setSelectedTransactionId(null);
+  };
+
+  const handleCancel = (transactionId) => {
+    setSelectedTransactionId(transactionId);
+    setIsModalOpen(true);
+  };
+    const handleConfirmCancel = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log("transaction id", selectedTransactionId)
+      const res = await Api.post(
+        `/cancel-transaction/${selectedTransactionId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            apiKey: apiKey,
+          },
+        }
+      );
+       toast.success("Transaction cancelled successfully", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      
+      await fetchTransaction();
+    } catch (err) {
+      console.error("Error cancelling transaction:", err);
+    } finally {
+      setIsModalOpen(false);
+      setSelectedTransactionId(null);
+    }
   };
 
   const handleUploadProof = () => {
@@ -63,7 +105,7 @@ const TransactionDetail = () => {
         <p className="mb-8 text-gray-500 text-md">
           View detail information about your order
         </p>
-      <div className="p-6 bg-white rounded-lg shadow-sm">
+        <div className="p-6 bg-white rounded-lg shadow-sm">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <span className="text-lg font-bold text-blue-600">{invoiceId}</span>
@@ -191,7 +233,7 @@ const TransactionDetail = () => {
             {status === 'pending' && (
               <>                
                 <button
-                  onClick={handleCancel}
+                  onClick={() => handleCancel(transaction.id)}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -199,6 +241,14 @@ const TransactionDetail = () => {
                   </svg>
                   Cancel Transaction
                 </button>
+                
+                {/* confirm Cancel transaction modal */}
+                {isModalOpen && (
+                  <CancelConfirmModal
+                    onCancel={handleCancelCancel}
+                    onConfirm={handleConfirmCancel}
+                  />
+                )}
                 <button
                   onClick={handleUploadProof}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
