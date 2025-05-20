@@ -9,10 +9,12 @@ import FallbackImage from "../../utils/FallbackImage";
 import { FaCopy } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import CancelConfirmModal from "./cancelConfirmModal";
+import PaymentProofModal from "./payment_proof_modal";
 
 const TransactionDetail = () => {
   const { id } = useParams();
   const [transaction, setTransaction] = useState(null);
+  const [isPaymentModalOpen, setIspaymentModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 
@@ -79,8 +81,12 @@ const TransactionDetail = () => {
     }
   };
 
-  const handleUploadProof = () => {
-    alert("Upload Payment Proof Clicked");
+   const handleOpenPaymentModal = () => {
+    setIspaymentModalOpen(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setIspaymentModalOpen(false);
   };
 
   if (!transaction) return <div className="p-10">Loading...</div>;
@@ -89,7 +95,6 @@ const TransactionDetail = () => {
     invoiceId,
     status,
     totalAmount,
-    orderDate,
     expiredDate,
     proofPaymentUrl,
     payment_method,
@@ -249,15 +254,30 @@ const TransactionDetail = () => {
                     onConfirm={handleConfirmCancel}
                   />
                 )}
-                <button
-                  onClick={handleUploadProof}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                  Upload Payment Proof
-                </button>
+
+                 {isPaymentModalOpen && (
+                    <PaymentProofModal
+                      transactionId={transaction.id}
+                      onClose={handleClosePaymentModal}
+                      onUpload={() => {
+                        handleClosePaymentModal();
+                        fetchTransaction(); 
+                      }}
+                    />
+                )}
+                
+                {!proofPaymentUrl && (
+                  <button
+                    onClick={handleOpenPaymentModal}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                    Upload Payment Proof
+                  </button>                  
+                )}
+
               </>
             )}
           </div>
